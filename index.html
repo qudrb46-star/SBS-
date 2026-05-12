@@ -45,8 +45,35 @@ body{background:#1a1a1a;color:#e0e0e0;font-family:'Noto Sans KR',sans-serif;font
 .rb-G{background:#80d0a0;color:#111}.rb-H{background:#f07070;color:#fff}.rb-I{background:#f0d080;color:#111}
 .rb-J{background:#a0c0f0;color:#111}.rb-K{background:#e0a0d0;color:#111}.rb-ART{background:#c0a080;color:#111}
 .rb-게임A{background:#80e0c0;color:#111}.rb-게임D{background:#e0c060;color:#111}
+
+/* ── 교재 안내 ── */
+.textbook-notice{background:#1e1a10;border:1px solid #5a4a10;border-radius:5px;padding:9px 12px;margin-bottom:10px;font-size:0.76rem;line-height:1.8;color:#c8b060}
+.tb-required{color:#f0c040;font-weight:700}
+.tb-warn{color:#f0c040;font-weight:700}
 .empty{padding:3rem;text-align:center;color:#555;display:none}
-@media(max-width:600px){.grid{grid-template-columns:1fr}.filter-bar{gap:6px}.search-wrap{margin-left:0;width:100%}.search-input{flex:1}}
+
+/* ── 다중선택 ── */
+.card{position:relative}
+.card.selected{background:#1e2e1e !important;outline:2px solid #6dcc6d}
+.card-check{position:absolute;top:10px;left:10px;width:18px;height:18px;border-radius:4px;border:2px solid #3a3a3a;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:2;pointer-events:none;color:transparent}
+.card.selected .card-check{background:#6dcc6d;border-color:#6dcc6d;color:#111;font-weight:900}
+.card .card-head{padding-left:4px}
+.card.selected .card-head{padding-left:28px}
+
+/* 하단 다중복사 바 */
+.multi-bar{position:fixed;bottom:0;left:0;right:0;background:#172517;border-top:2px solid #6dcc6d;padding:12px 20px;display:flex;align-items:center;gap:10px;z-index:200;transform:translateY(110%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.multi-bar.show{transform:translateY(0)}
+.multi-count{font-size:0.85rem;color:#6dcc6d;font-weight:700;white-space:nowrap}
+.multi-spacer{flex:1}
+.multi-all-btn{background:transparent;color:#888;border:1px solid #3a3a3a;padding:6px 11px;border-radius:4px;font-size:0.72rem;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all .15s}
+.multi-all-btn:hover{color:#fff;border-color:#666}
+.multi-clear-btn{background:#2e2e2e;color:#aaa;border:1px solid #3a3a3a;padding:7px 14px;border-radius:5px;font-size:0.78rem;font-family:inherit;cursor:pointer;transition:all .15s}
+.multi-clear-btn:hover{background:#3a3a3a;color:#fff}
+.multi-copy-btn{background:#6dcc6d;color:#111;border:none;padding:8px 20px;border-radius:5px;font-size:0.82rem;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;white-space:nowrap}
+.multi-copy-btn:hover{background:#5bbb5b}
+.multi-copy-btn.ok{background:#2e5c2e;color:#9de89d}
+
+@media(max-width:600px){.grid{grid-template-columns:1fr}.filter-bar{gap:6px}.search-wrap{margin-left:0;width:100%}.search-input{flex:1}.multi-bar{flex-wrap:wrap;gap:8px}.multi-spacer{display:none}}
 </style>
 </head>
 <body>
@@ -78,6 +105,15 @@ body{background:#1a1a1a;color:#e0e0e0;font-family:'Noto Sans KR',sans-serif;font
 </div>
 <div class="grid" id="cardGrid"></div>
 <div class="empty" id="emptyMsg">검색 결과가 없습니다.</div>
+
+<!-- 다중선택 복사 바 -->
+<div class="multi-bar" id="multiBar">
+  <span class="multi-count" id="multiCount">0개 선택됨</span>
+  <div class="multi-spacer"></div>
+  <button class="multi-all-btn" onclick="selectAllVisible()">보이는 전체 선택</button>
+  <button class="multi-clear-btn" onclick="clearSelection()">선택 해제</button>
+  <button class="multi-copy-btn" id="multiCopyBtn" onclick="copySelected()">📋 선택 항목 복사</button>
+</div>
 
 <script>
 const ZOOM = {
@@ -163,9 +199,15 @@ const COURSES = [
 
 function makeCard(c){
   const zoom = ZOOM[c.room] || '';
-  const copyText = `■ SBS컴퓨터아트학원 부산점 개강안내\n· 수강과목 : ${c.name}(${c.days})\n· 개강일 : ${c.start}\n· 종강일 : ${c.end}\n· 수강시간 : ${c.time}\n· 강의실 : ${c.room} 강의장\n· 줌 링크 : ${zoom}\n· 대면/비대면 : 대면`;
-  const roomLabel = c.room.length <= 1 ? c.room+'강의장' : c.room+'강의장';
-  return `<div class="card" data-room="${c.room}">
+  const TEXTBOOK_KW = ['포토샵','일러스트','캐드','컴활','모스','스케치업','맥스'];
+  const hasTextbook = TEXTBOOK_KW.some(kw => c.name.includes(kw));
+  const textbookExtra = hasTextbook
+    ? `\n· 교재 : \n· 교재구매사이트 : https://www.kedustore.com\n＊<필수> 개강일, 교재 꼭! 인지해주세요\n* 개강 3일전 수업 취소, 연기, 시간 및 과목변경 불가능합니다.`
+    : '';
+  const copyText = `■ SBS컴퓨터아트학원 부산점 개강안내\n· 수강과목 : ${c.name}(${c.days})\n· 개강일 : ${c.start}\n· 종강일 : ${c.end}\n· 수강시간 : ${c.time}\n· 강의실 : ${c.room} 강의장\n· 줌 링크 : ${zoom}\n· 대면/비대면 : 대면${textbookExtra}`;
+  const roomLabel = c.room+'강의장';
+  return `<div class="card" data-room="${c.room}" data-copy="${encodeURIComponent(copyText)}" onclick="toggleSelect(event,this)">
+  <div class="card-check">✓</div>
   <div class="card-head">
     <div><div class="card-name">${c.name}</div><div class="card-sub">${c.days} | ${c.time}</div></div>
     <span class="room-badge rb-${c.room}">${roomLabel}</span>
@@ -177,10 +219,16 @@ function makeCard(c){
     <li><span class="il-label">종강일</span><span class="il-val">${c.end}</span></li>
     <li><span class="il-label">수강시간</span><span class="il-val">${c.time}</span></li>
     <li><span class="il-label">강의실</span><span class="il-val">${c.room} 강의장</span></li>
-    <li><span class="il-label">줌 링크</span><a class="il-link" href="${zoom}" target="_blank">${zoom}</a></li>
+    <li><span class="il-label">줌 링크</span><a class="il-link" href="${zoom}" target="_blank" onclick="event.stopPropagation()">${zoom}</a></li>
     <li><span class="il-label">대면/비대면</span><span class="il-bold">대면</span></li>
+    ${hasTextbook ? `<li style="margin-top:4px"><span class="il-label">교재</span><span class="il-val"></span></li>
+    <li><span class="il-label">교재구매</span><a class="il-link" href="https://www.kedustore.com" target="_blank" onclick="event.stopPropagation()">https://www.kedustore.com</a></li>` : ''}
   </ul>
-  <button class="copy-btn" onclick='copyCard(this,${JSON.stringify(copyText)})'>📋 복사하기</button>
+  ${hasTextbook ? `<div class="textbook-notice">
+    <span class="tb-required">＊필수</span> 개강일, 교재 꼭! 인지해주세요<br>
+    <span class="tb-warn">＊</span> 개강 3일전 수업 취소, 연기, 시간 및 과목변경 불가능합니다.
+  </div>` : ''}
+  <button class="copy-btn" onclick='event.stopPropagation();copyCard(this,${JSON.stringify(copyText)})'>📋 복사하기</button>
 </div>`;
 }
 
@@ -191,7 +239,11 @@ const btns = document.querySelectorAll('.filter-btn');
 const countEl = document.getElementById('visibleCount');
 const searchInput = document.getElementById('searchInput');
 const emptyMsg = document.getElementById('emptyMsg');
+const multiBar = document.getElementById('multiBar');
+const multiCount = document.getElementById('multiCount');
+const multiCopyBtn = document.getElementById('multiCopyBtn');
 let currentRoom = 'ALL';
+let selectedCards = new Set();
 
 function filterCards(){
   const cards = document.querySelectorAll('.card[data-room]');
@@ -214,6 +266,65 @@ btns.forEach(btn => btn.addEventListener('click', () => {
   filterCards();
 }));
 searchInput.addEventListener('input', filterCards);
+
+// ── 다중선택 ──
+function toggleSelect(e, card){
+  // 복사버튼·링크 클릭 시 선택 무시
+  if(e.target.closest('.copy-btn') || e.target.closest('.il-link')) return;
+  if(selectedCards.has(card)){
+    selectedCards.delete(card);
+    card.classList.remove('selected');
+  } else {
+    selectedCards.add(card);
+    card.classList.add('selected');
+  }
+  updateMultiBar();
+}
+
+function updateMultiBar(){
+  const n = selectedCards.size;
+  multiCount.textContent = n + '개 선택됨';
+  multiBar.classList.toggle('show', n > 0);
+}
+
+function clearSelection(){
+  selectedCards.forEach(c => c.classList.remove('selected'));
+  selectedCards.clear();
+  updateMultiBar();
+}
+
+function selectAllVisible(){
+  document.querySelectorAll('.card[data-room]:not(.hidden)').forEach(card => {
+    selectedCards.add(card);
+    card.classList.add('selected');
+  });
+  updateMultiBar();
+}
+
+function copySelected(){
+  const texts = [];
+  // 화면 순서대로 수집
+  document.querySelectorAll('.card[data-room]').forEach(card => {
+    if(selectedCards.has(card)){
+      texts.push(decodeURIComponent(card.dataset.copy));
+    }
+  });
+  const combined = texts.join('\n\n──────────────\n\n');
+  const done = () => {
+    multiCopyBtn.classList.add('ok');
+    multiCopyBtn.textContent = '✅ ' + texts.length + '개 복사됨!';
+    setTimeout(() => {
+      multiCopyBtn.classList.remove('ok');
+      multiCopyBtn.textContent = '📋 선택 항목 복사';
+    }, 2500);
+  };
+  if(navigator.clipboard){ navigator.clipboard.writeText(combined).then(done); }
+  else {
+    const ta = document.createElement('textarea'); ta.value = combined;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); done();
+  }
+}
 
 function copyCard(btn, text){
   const done = () => {
