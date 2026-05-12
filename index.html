@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SBS컴퓨터아트학원 부산점 개강안내</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1a1a;color:#e0e0e0;font-family:'Noto Sans KR',sans-serif;font-size:14px}
+.site-header{background:#111;border-bottom:2px solid #f0c040;padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
+.site-header h1{font-size:1rem;font-weight:700;color:#fff}
+.site-header span{font-size:0.75rem;color:#888}
+.filter-bar{background:#222;border-bottom:1px solid #2e2e2e;padding:10px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filter-label{font-size:0.7rem;color:#888;letter-spacing:0.1em;margin-right:2px}
+.filter-btn{background:#2e2e2e;border:1px solid #3a3a3a;color:#bbb;padding:5px 11px;font-size:0.72rem;font-family:inherit;border-radius:4px;cursor:pointer;transition:all .15s}
+.filter-btn:hover,.filter-btn.active{background:#f0c040;color:#111;border-color:#f0c040;font-weight:700}
+.search-wrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+.search-input{background:#2e2e2e;border:1px solid #3a3a3a;color:#e0e0e0;padding:5px 12px;font-size:0.72rem;font-family:inherit;border-radius:4px;outline:none;width:160px}
+.search-input::placeholder{color:#555}
+.count-badge{font-size:0.7rem;color:#666;white-space:nowrap}
+.count-badge span{color:#f0c040;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:#111;padding:1px}
+.card{background:#242424;padding:1.3rem 1.5rem 1.1rem;transition:background .2s}
+.card:hover{background:#2c2c2c}
+.card.hidden{display:none}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.card-name{font-size:0.97rem;font-weight:700;color:#fff;line-height:1.3}
+.card-sub{font-size:0.7rem;color:#888;margin-top:3px}
+.room-badge{font-size:0.62rem;font-weight:700;padding:3px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-left:8px;margin-top:2px}
+.card-hr{border:none;border-top:1px solid rgba(255,255,255,0.07);margin:10px 0}
+.info-list{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.info-list li{display:flex;gap:8px;font-size:0.8rem;line-height:1.4}
+.info-list li::before{content:'·';color:#555;flex-shrink:0;padding-top:1px}
+.il-label{color:#777;min-width:60px;flex-shrink:0}
+.il-val{color:#ddd}
+.il-link{color:#5b9cf6;text-decoration:none;word-break:break-all;font-size:0.74rem}
+.il-link:hover{text-decoration:underline}
+.il-bold{color:#fff;font-weight:700}
+.copy-btn{width:100%;padding:8px;background:#2e2e2e;border:none;border-radius:5px;color:#aaa;font-size:0.78rem;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.copy-btn:hover{background:#3a3a3a;color:#fff}
+.copy-btn.ok{background:#1e3d1e;color:#6dcc6d}
+.rb-A{background:#f0c040;color:#111}.rb-B{background:#5b9cf6;color:#111}.rb-C{background:#7ec8e3;color:#111}
+.rb-D{background:#b0e57c;color:#111}.rb-E{background:#d4a0f0;color:#111}.rb-F{background:#f0a080;color:#111}
+.rb-G{background:#80d0a0;color:#111}.rb-H{background:#f07070;color:#fff}.rb-I{background:#f0d080;color:#111}
+.rb-J{background:#a0c0f0;color:#111}.rb-K{background:#e0a0d0;color:#111}.rb-ART{background:#c0a080;color:#111}
+.rb-게임A{background:#80e0c0;color:#111}.rb-게임D{background:#e0c060;color:#111}
+.empty{padding:3rem;text-align:center;color:#555;display:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.filter-bar{gap:6px}.search-wrap{margin-left:0;width:100%}.search-input{flex:1}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <h1>■ SBS컴퓨터아트학원 부산점</h1>
+  <span>개강안내</span>
+</header>
+<div class="filter-bar">
+  <span class="filter-label">강의실</span>
+  <button class="filter-btn active" data-room="ALL">전체</button>
+  <button class="filter-btn" data-room="A">A</button>
+  <button class="filter-btn" data-room="B">B</button>
+  <button class="filter-btn" data-room="C">C</button>
+  <button class="filter-btn" data-room="D">D</button>
+  <button class="filter-btn" data-room="E">E</button>
+  <button class="filter-btn" data-room="F">F</button>
+  <button class="filter-btn" data-room="G">G</button>
+  <button class="filter-btn" data-room="H">H</button>
+  <button class="filter-btn" data-room="I">I</button>
+  <button class="filter-btn" data-room="J">J</button>
+  <button class="filter-btn" data-room="K">K</button>
+  <button class="filter-btn" data-room="ART">ART</button>
+  <button class="filter-btn" data-room="게임A">게임A</button>
+  <button class="filter-btn" data-room="게임D">게임D</button>
+  <div class="search-wrap">
+    <input class="search-input" type="text" placeholder="🔍 강좌명 검색..." id="searchInput"/>
+    <div class="count-badge">총 <span id="visibleCount">0</span>개</div>
+  </div>
+</div>
+<div class="grid" id="cardGrid"></div>
+<div class="empty" id="emptyMsg">검색 결과가 없습니다.</div>
+
+<script>
+const ZOOM = {
+  A:'https://zoom.us/j/7897897801', B:'https://zoom.us/j/7897897802', C:'https://zoom.us/j/7897897803',
+  D:'https://zoom.us/j/7897897804', E:'https://zoom.us/j/7897897805', F:'https://zoom.us/j/7897897806',
+  G:'https://zoom.us/j/7897897807', H:'https://zoom.us/j/7897897808', I:'https://zoom.us/j/7897897819',
+  J:'https://zoom.us/j/7897897810', K:'https://zoom.us/j/7897897820', M:'https://zoom.us/j/7897897813',
+  ART:'https://zoom.us/j/7897897813', '게임A':'https://zoom.us/j/7897897814', '게임D':'https://zoom.us/j/7897897812'
+};
+
+const COURSES = [
+  {room:'A', name:'스케치(금)', days:'금', time:'09:00~12:00', start:'05.22', end:'06.12'},
+  {room:'A', name:'실내건축1(1,3개월)', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'A', name:'스케치(금)', days:'금', time:'10:00~13:00', start:'04.24', end:'05.15'},
+  {room:'A', name:'캐드2', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+  {room:'A', name:'실내건축2(2,3개월)', days:'월~목', time:'18:00~20:00', start:'05.13', end:'06.10'},
+  {room:'A', name:'실내건축1(저녁)', days:'월~목', time:'20:00~22:00', start:'05.13', end:'06.10'},
+  {room:'B', name:'포토웍스', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'B', name:'디일러', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'B', name:'GTQi/방학', days:'월~목', time:'16:00~18:00', start:'05.18', end:'05.28'},
+  {room:'B', name:'전산회계1급', days:'월/수/금', time:'19:00~22:00', start:'04.13', end:'06.03'},
+  {room:'B', name:'전산세무2급', days:'화/목', time:'19:00~22:00', start:'04.14', end:'06.05'},
+  {room:'C', name:'영상제작 출판편집(국기)', days:'월~금', time:'09:00~14:00', start:'12.18', end:'07.03'},
+  {room:'C', name:'그린에너지 스마트건축(산대특)', days:'월~금', time:'14:00~18:00', start:'11.05', end:'07.06'},
+  {room:'C', name:'일러스트', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
+  {room:'C', name:'포토샵', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
+  {room:'D', name:'후디니3', days:'화/목', time:'11:00~13:00', start:'05.14', end:'06.09'},
+  {room:'D', name:'마야포폴', days:'월/수/금', time:'16:00~18:00', start:'05.13', end:'06.10'},
+  {room:'D', name:'블렌더3', days:'화/목', time:'18:00~20:00', start:'05.15', end:'06.09'},
+  {room:'D', name:'모델링2', days:'월/수/금', time:'20:00~22:00', start:'05.13', end:'06.10'},
+  {room:'E', name:'스케치업1', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'E', name:'모션에펙', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'E', name:'맥스2', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+  {room:'E', name:'인테리어드래프팅', days:'월~목', time:'16:00~18:00', start:'05.13', end:'06.10'},
+  {room:'E', name:'스케치업1', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
+  {room:'E', name:'캐드1', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
+  {room:'F', name:'비쥬얼모션3', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'F', name:'시포디3', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'F', name:'2D모션포폴', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+  {room:'F', name:'프리미어', days:'금', time:'14:00~17:00', start:'04.17', end:'05.15'},
+  {room:'F', name:'프리미어1', days:'금', time:'14:00~17:00', start:'05.22', end:'06.12'},
+  {room:'F', name:'3D모션포폴', days:'월~목', time:'16:00~18:00', start:'05.13', end:'06.10'},
+  {room:'F', name:'입시포폴', days:'화/목', time:'18:00~20:00', start:'05.14', end:'06.09'},
+  {room:'F', name:'프리미어1', days:'금', time:'19:00~22:00', start:'04.24', end:'05.22'},
+  {room:'G', name:'이벤트특강', days:'화/목', time:'10:00~13:00', start:'03.24', end:'05.28'},
+  {room:'G', name:'이벤트특강', days:'화/목', time:'10:00~13:00', start:'06.09', end:'07.02'},
+  {room:'G', name:'스케치업렌더링1', days:'금', time:'16:00~19:00', start:'05.08', end:'05.29'},
+  {room:'G', name:'스케치업렌더링2', days:'금', time:'19:00~22:00', start:'04.17', end:'05.15'},
+  {room:'G', name:'모스', days:'화/목', time:'19:00~22:00', start:'05.12', end:'06.16'},
+  {room:'G', name:'프리미어2', days:'금', time:'19:00~22:00', start:'05.29', end:'06.19'},
+  {room:'H', name:'프론트엔드(국기)', days:'월~금', time:'09:00~14:00', start:'03.19', end:'09.28'},
+  {room:'H', name:'문화관광 콘텐츠영상(산대특)', days:'월~금', time:'14:00~18:00', start:'09.16', end:'05.22'},
+  {room:'H', name:'AI 편집디자인 과정(산대특)', days:'월~금', time:'15:00~18:00', start:'05.26', end:'07.08'},
+  {room:'I', name:'에펙', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'I', name:'프리미어2', days:'금', time:'09:00~12:00', start:'05.08', end:'05.29'},
+  {room:'I', name:'캐드1', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'I', name:'컴활2급', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+  {room:'I', name:'AI 크리에이터-시각편집', days:'금', time:'14:00~18:00', start:'05.15', end:'06.12'},
+  {room:'I', name:'모션에펙', days:'월~목', time:'16:00~18:00', start:'05.13', end:'06.10'},
+  {room:'I', name:'프리미어1', days:'월/수', time:'19:00~22:00', start:'05.13', end:'05.27'},
+  {room:'I', name:'에펙', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
+  {room:'I', name:'프리미어2', days:'월/수', time:'19:00~22:00', start:'06.01', end:'06.10'},
+  {room:'J', name:'인포그라피', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'J', name:'발상과표현', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'J', name:'편집포폴2', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+  {room:'J', name:'AI 프롬프트엔지니어링', days:'화/목', time:'19:00~21:00', start:'05.14', end:'06.09'},
+  {room:'J', name:'포토웍스', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
+  {room:'K', name:'컴활1급', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'K', name:'컴퓨터응용', days:'월/화', time:'11:00~13:00', start:'05.18', end:'06.15'},
+  {room:'K', name:'컴퓨터기초', days:'수/목', time:'11:00~13:00', start:'05.20', end:'06.11'},
+  {room:'K', name:'시니어자격증', days:'금', time:'12:00~16:00', start:'05.15', end:'06.05'},
+  {room:'K', name:'일러스트', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+  {room:'K', name:'웹3', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
+  {room:'K', name:'웹 프로그래밍', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
+  {room:'ART', name:'디지털드로잉(A)', days:'월/수/금', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'ART', name:'디지털드로잉(B)', days:'화/목', time:'13:00~15:00', start:'05.14', end:'06.09'},
+  {room:'게임A', name:'웹포폴2', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'게임A', name:'UIUX', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'게임D', name:'일러스트', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
+  {room:'게임D', name:'포토샵', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
+  {room:'게임D', name:'포토웍스', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+];
+
+function makeCard(c){
+  const zoom = ZOOM[c.room] || '';
+  const copyText = `■ SBS컴퓨터아트학원 부산점 개강안내\n· 수강과목 : ${c.name}(${c.days})\n· 개강일 : ${c.start}\n· 종강일 : ${c.end}\n· 수강시간 : ${c.time}\n· 강의실 : ${c.room} 강의장\n· 줌 링크 : ${zoom}\n· 대면/비대면 : 대면`;
+  const roomLabel = c.room.length <= 1 ? c.room+'강의장' : c.room+'강의장';
+  return `<div class="card" data-room="${c.room}">
+  <div class="card-head">
+    <div><div class="card-name">${c.name}</div><div class="card-sub">${c.days} | ${c.time}</div></div>
+    <span class="room-badge rb-${c.room}">${roomLabel}</span>
+  </div>
+  <hr class="card-hr">
+  <ul class="info-list">
+    <li><span class="il-label">수강과목</span><span class="il-val">${c.name}(${c.days})</span></li>
+    <li><span class="il-label">개강일</span><span class="il-val">${c.start}</span></li>
+    <li><span class="il-label">종강일</span><span class="il-val">${c.end}</span></li>
+    <li><span class="il-label">수강시간</span><span class="il-val">${c.time}</span></li>
+    <li><span class="il-label">강의실</span><span class="il-val">${c.room} 강의장</span></li>
+    <li><span class="il-label">줌 링크</span><a class="il-link" href="${zoom}" target="_blank">${zoom}</a></li>
+    <li><span class="il-label">대면/비대면</span><span class="il-bold">대면</span></li>
+  </ul>
+  <button class="copy-btn" onclick='copyCard(this,${JSON.stringify(copyText)})'>📋 복사하기</button>
+</div>`;
+}
+
+const grid = document.getElementById('cardGrid');
+grid.innerHTML = COURSES.map(makeCard).join('');
+
+const btns = document.querySelectorAll('.filter-btn');
+const countEl = document.getElementById('visibleCount');
+const searchInput = document.getElementById('searchInput');
+const emptyMsg = document.getElementById('emptyMsg');
+let currentRoom = 'ALL';
+
+function filterCards(){
+  const cards = document.querySelectorAll('.card[data-room]');
+  const q = searchInput.value.trim().toLowerCase();
+  let n = 0;
+  cards.forEach(card => {
+    const roomOk = currentRoom === 'ALL' || card.dataset.room === currentRoom;
+    const textOk = !q || card.textContent.toLowerCase().includes(q);
+    card.classList.toggle('hidden', !(roomOk && textOk));
+    if(roomOk && textOk) n++;
+  });
+  countEl.textContent = n;
+  emptyMsg.style.display = n === 0 ? 'block' : 'none';
+}
+
+btns.forEach(btn => btn.addEventListener('click', () => {
+  btns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentRoom = btn.dataset.room;
+  filterCards();
+}));
+searchInput.addEventListener('input', filterCards);
+
+function copyCard(btn, text){
+  const done = () => {
+    btn.classList.add('ok'); btn.textContent = '✅ 복사됨!';
+    setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '📋 복사하기'; }, 2000);
+  };
+  if(navigator.clipboard){ navigator.clipboard.writeText(text).then(done); }
+  else {
+    const ta = document.createElement('textarea'); ta.value = text;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); done();
+  }
+}
+
+filterCards();
+</script>
+</body>
+</html>
