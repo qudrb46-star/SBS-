@@ -45,22 +45,18 @@ body{background:#1a1a1a;color:#e0e0e0;font-family:'Noto Sans KR',sans-serif;font
 .rb-G{background:#80d0a0;color:#111}.rb-H{background:#f07070;color:#fff}.rb-I{background:#f0d080;color:#111}
 .rb-J{background:#a0c0f0;color:#111}.rb-K{background:#e0a0d0;color:#111}.rb-ART{background:#c0a080;color:#111}
 .rb-게임A{background:#80e0c0;color:#111}.rb-게임D{background:#e0c060;color:#111}
-
-/* ── 교재 안내 ── */
+.dates-val{color:#a0c8f0;font-size:0.75rem;word-break:break-all}
+.holiday-val{color:#f0a060;font-size:0.75rem}
 .textbook-notice{background:#1e1a10;border:1px solid #5a4a10;border-radius:5px;padding:9px 12px;margin-bottom:10px;font-size:0.76rem;line-height:1.8;color:#c8b060}
 .tb-required{color:#f0c040;font-weight:700}
 .tb-warn{color:#f0c040;font-weight:700}
 .empty{padding:3rem;text-align:center;color:#555;display:none}
-
-/* ── 다중선택 ── */
 .card{position:relative}
 .card.selected{background:#1e2e1e !important;outline:2px solid #6dcc6d}
 .card-check{position:absolute;top:10px;left:10px;width:18px;height:18px;border-radius:4px;border:2px solid #3a3a3a;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;z-index:2;pointer-events:none;color:transparent}
 .card.selected .card-check{background:#6dcc6d;border-color:#6dcc6d;color:#111;font-weight:900}
 .card .card-head{padding-left:4px}
 .card.selected .card-head{padding-left:28px}
-
-/* 하단 다중복사 바 */
 .multi-bar{position:fixed;bottom:0;left:0;right:0;background:#172517;border-top:2px solid #6dcc6d;padding:12px 20px;display:flex;align-items:center;gap:10px;z-index:200;transform:translateY(110%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
 .multi-bar.show{transform:translateY(0)}
 .multi-count{font-size:0.85rem;color:#6dcc6d;font-weight:700;white-space:nowrap}
@@ -72,7 +68,6 @@ body{background:#1a1a1a;color:#e0e0e0;font-family:'Noto Sans KR',sans-serif;font
 .multi-copy-btn{background:#6dcc6d;color:#111;border:none;padding:8px 20px;border-radius:5px;font-size:0.82rem;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;white-space:nowrap}
 .multi-copy-btn:hover{background:#5bbb5b}
 .multi-copy-btn.ok{background:#2e5c2e;color:#9de89d}
-
 @media(max-width:600px){.grid{grid-template-columns:1fr}.filter-bar{gap:6px}.search-wrap{margin-left:0;width:100%}.search-input{flex:1}.multi-bar{flex-wrap:wrap;gap:8px}.multi-spacer{display:none}}
 </style>
 </head>
@@ -105,8 +100,6 @@ body{background:#1a1a1a;color:#e0e0e0;font-family:'Noto Sans KR',sans-serif;font
 </div>
 <div class="grid" id="cardGrid"></div>
 <div class="empty" id="emptyMsg">검색 결과가 없습니다.</div>
-
-<!-- 다중선택 복사 바 -->
 <div class="multi-bar" id="multiBar">
   <span class="multi-count" id="multiCount">0개 선택됨</span>
   <div class="multi-spacer"></div>
@@ -114,87 +107,108 @@ body{background:#1a1a1a;color:#e0e0e0;font-family:'Noto Sans KR',sans-serif;font
   <button class="multi-clear-btn" onclick="clearSelection()">선택 해제</button>
   <button class="multi-copy-btn" id="multiCopyBtn" onclick="copySelected()">📋 선택 항목 복사</button>
 </div>
-
 <script>
 const ZOOM = {
   A:'https://zoom.us/j/7897897801', B:'https://zoom.us/j/7897897802', C:'https://zoom.us/j/7897897803',
   D:'https://zoom.us/j/7897897804', E:'https://zoom.us/j/7897897805', F:'https://zoom.us/j/7897897806',
   G:'https://zoom.us/j/7897897807', H:'https://zoom.us/j/7897897808', I:'https://zoom.us/j/7897897819',
-  J:'https://zoom.us/j/7897897810', K:'https://zoom.us/j/7897897820', M:'https://zoom.us/j/7897897813',
+  J:'https://zoom.us/j/7897897810', K:'https://zoom.us/j/7897897820',
   ART:'https://zoom.us/j/7897897813', '게임A':'https://zoom.us/j/7897897814', '게임D':'https://zoom.us/j/7897897812'
 };
 
 const COURSES = [
-  {room:'A', name:'스케치(금)', days:'금', time:'09:00~12:00', start:'05.22', end:'06.12'},
-  {room:'A', name:'실내건축1(1,3개월)', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'A', name:'스케치(금)', days:'금', time:'10:00~13:00', start:'04.24', end:'05.15'},
-  {room:'A', name:'캐드2', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
-  {room:'A', name:'실내건축2(2,3개월)', days:'월~목', time:'18:00~20:00', start:'05.13', end:'06.10'},
-  {room:'A', name:'실내건축1(저녁)', days:'월~목', time:'20:00~22:00', start:'05.13', end:'06.10'},
-  {room:'B', name:'포토웍스', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'B', name:'디일러', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'B', name:'GTQi/방학', days:'월~목', time:'16:00~18:00', start:'05.18', end:'05.28'},
-  {room:'B', name:'전산회계1급', days:'월/수/금', time:'19:00~22:00', start:'04.13', end:'06.03'},
-  {room:'B', name:'전산세무2급', days:'화/목', time:'19:00~22:00', start:'04.14', end:'06.05'},
-  {room:'C', name:'영상제작 출판편집(국기)', days:'월~금', time:'09:00~14:00', start:'12.18', end:'07.03'},
-  {room:'C', name:'그린에너지 스마트건축(산대특)', days:'월~금', time:'14:00~18:00', start:'11.05', end:'07.06'},
-  {room:'C', name:'일러스트', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
-  {room:'C', name:'포토샵', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
-  {room:'D', name:'후디니3', days:'화/목', time:'11:00~13:00', start:'05.14', end:'06.09'},
-  {room:'D', name:'마야포폴', days:'월/수/금', time:'16:00~18:00', start:'05.13', end:'06.10'},
-  {room:'D', name:'블렌더3', days:'화/목', time:'18:00~20:00', start:'05.15', end:'06.09'},
-  {room:'D', name:'모델링2', days:'월/수/금', time:'20:00~22:00', start:'05.13', end:'06.10'},
-  {room:'E', name:'스케치업1', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'E', name:'모션에펙', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'E', name:'맥스2', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
-  {room:'E', name:'인테리어드래프팅', days:'월~목', time:'16:00~18:00', start:'05.13', end:'06.10'},
-  {room:'E', name:'스케치업1', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
-  {room:'E', name:'캐드1', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
-  {room:'F', name:'비쥬얼모션3', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'F', name:'시포디3', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'F', name:'2D모션포폴', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
-  {room:'F', name:'프리미어', days:'금', time:'14:00~17:00', start:'04.17', end:'05.15'},
-  {room:'F', name:'프리미어1', days:'금', time:'14:00~17:00', start:'05.22', end:'06.12'},
-  {room:'F', name:'3D모션포폴', days:'월~목', time:'16:00~18:00', start:'05.13', end:'06.10'},
-  {room:'F', name:'입시포폴', days:'화/목', time:'18:00~20:00', start:'05.14', end:'06.09'},
-  {room:'F', name:'프리미어1', days:'금', time:'19:00~22:00', start:'04.24', end:'05.22'},
-  {room:'G', name:'이벤트특강', days:'화/목', time:'10:00~13:00', start:'03.24', end:'05.28'},
-  {room:'G', name:'이벤트특강', days:'화/목', time:'10:00~13:00', start:'06.09', end:'07.02'},
-  {room:'G', name:'스케치업렌더링1', days:'금', time:'16:00~19:00', start:'05.08', end:'05.29'},
-  {room:'G', name:'스케치업렌더링2', days:'금', time:'19:00~22:00', start:'04.17', end:'05.15'},
-  {room:'G', name:'모스', days:'화/목', time:'19:00~22:00', start:'05.12', end:'06.16'},
-  {room:'G', name:'프리미어2', days:'금', time:'19:00~22:00', start:'05.29', end:'06.19'},
-  {room:'H', name:'프론트엔드(국기)', days:'월~금', time:'09:00~14:00', start:'03.19', end:'09.28'},
-  {room:'H', name:'문화관광 콘텐츠영상(산대특)', days:'월~금', time:'14:00~18:00', start:'09.16', end:'05.22'},
-  {room:'H', name:'AI 편집디자인 과정(산대특)', days:'월~금', time:'15:00~18:00', start:'05.26', end:'07.08'},
-  {room:'I', name:'에펙', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'I', name:'프리미어2', days:'금', time:'09:00~12:00', start:'05.08', end:'05.29'},
-  {room:'I', name:'캐드1', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'I', name:'컴활2급', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
-  {room:'I', name:'AI 크리에이터-시각편집', days:'금', time:'14:00~18:00', start:'05.15', end:'06.12'},
-  {room:'I', name:'모션에펙', days:'월~목', time:'16:00~18:00', start:'05.13', end:'06.10'},
-  {room:'I', name:'프리미어1', days:'월/수', time:'19:00~22:00', start:'05.13', end:'05.27'},
-  {room:'I', name:'에펙', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
-  {room:'I', name:'프리미어2', days:'월/수', time:'19:00~22:00', start:'06.01', end:'06.10'},
-  {room:'J', name:'인포그라피', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'J', name:'발상과표현', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'J', name:'편집포폴2', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
-  {room:'J', name:'AI 프롬프트엔지니어링', days:'화/목', time:'19:00~21:00', start:'05.14', end:'06.09'},
-  {room:'J', name:'포토웍스', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
-  {room:'K', name:'컴활1급', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'K', name:'컴퓨터응용', days:'월/화', time:'11:00~13:00', start:'05.18', end:'06.15'},
-  {room:'K', name:'컴퓨터기초', days:'수/목', time:'11:00~13:00', start:'05.20', end:'06.11'},
-  {room:'K', name:'시니어자격증', days:'금', time:'12:00~16:00', start:'05.15', end:'06.05'},
-  {room:'K', name:'일러스트', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
-  {room:'K', name:'웹3', days:'월/수/금', time:'19:00~22:00', start:'05.13', end:'06.10'},
-  {room:'K', name:'웹 프로그래밍', days:'화/목', time:'19:00~22:00', start:'05.14', end:'06.09'},
-  {room:'ART', name:'디지털드로잉(A)', days:'월/수/금', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'ART', name:'디지털드로잉(B)', days:'화/목', time:'13:00~15:00', start:'05.14', end:'06.09'},
-  {room:'게임A', name:'웹포폴2', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'게임A', name:'UIUX', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'게임D', name:'일러스트', days:'월~목', time:'09:00~11:00', start:'05.13', end:'06.10'},
-  {room:'게임D', name:'포토샵', days:'월~목', time:'11:00~13:00', start:'05.13', end:'06.10'},
-  {room:'게임D', name:'포토웍스', days:'월~목', time:'14:00~16:00', start:'05.13', end:'06.10'},
+  {room:'B',name:'디일러',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'C',name:'영상제작 출판편집(국기)',days:'월~금',time:'09:00~14:00',start:'12.18',end:'07.03',dates:'',holiday:'5.25 6.3, 5, 26'},
+  {room:'D',name:'실내건축2(2,3개월)',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'E',name:'스케치업2',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'시포디1',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'AI 크리에이터-영상모션',days:'금',time:'09:00~13:00',start:'06.12',end:'07.03',dates:'6/12,19,26,7/3',holiday:''},
+  {room:'H',name:'프론트엔드(국기)',days:'월~금',time:'09:00~14:00',start:'03.19',end:'09.28',dates:'',holiday:'5.25 6.3, 26'},
+  {room:'I',name:'모션에펙',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'I',name:'프리미어1',days:'금',time:'09:00~13:00',start:'06.12',end:'06.26',dates:'',holiday:''},
+  {room:'I',name:'프리미어2',days:'금',time:'09:00~13:00',start:'07.03',end:'07.24',dates:'',holiday:''},
+  {room:'J',name:'인디자인',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'K',name:'시니어AI',days:'금',time:'09:00~13:00',start:'06.12',end:'07.03',dates:'6/12,19,26,7/3',holiday:''},
+  {room:'게임A',name:'웹포폴3',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'게임D',name:'포토샵',days:'월~목',time:'09:00~11:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'게임D',name:'컴활1급/방학',days:'월~금',time:'09:00~11:00',start:'07.09',end:'08.05',dates:'',holiday:''},
+  {room:'A',name:'스케치(금)',days:'금',time:'10:00~13:00',start:'05.22',end:'06.12',dates:'',holiday:''},
+  {room:'A',name:'스케치(금)',days:'금',time:'10:00~13:00',start:'06.19',end:'07.03',dates:'6/19,26,7/3',holiday:''},
+  {room:'E',name:'이벤트특강',days:'화/목/금',time:'10:00~13:00',start:'06.02',end:'07.02',dates:'6/2,4,5,9,11,16,18,19,23,25,30,7/2',holiday:''},
+  {room:'A',name:'캐드1',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'A',name:'포토웍스',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'B',name:'후디니4',days:'화/목/금',time:'11:00~13:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'C',name:'블렌더1/방학',days:'월/수/금',time:'11:00~14:00',start:'06.24',end:'07.08',dates:'6/24,26,29,7/1,3,6,8',holiday:''},
+  {room:'C',name:'캐드2',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'E',name:'비쥬얼모션1',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'이벤트특강',days:'월/수',time:'11:00~13:00',start:'06.08',end:'07.01',dates:'6/8,10,15,17,22,24',holiday:''},
+  {room:'G',name:'에펙',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'G',name:'색채학',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'H',name:'컴퓨터응용',days:'월/화',time:'11:00~13:00',start:'05.18',end:'06.15',dates:'6/1,2,8,9,15',holiday:''},
+  {room:'H',name:'컴퓨터기초',days:'수/목',time:'11:00~13:00',start:'05.20',end:'06.11',dates:'5/20,21,27,28,6/3,4,10,11',holiday:''},
+  {room:'I',name:'컴퓨터기초',days:'월/화',time:'11:00~13:00',start:'06.16',end:'07.13',dates:'6/16,22,23,29,30,7/6,7,13',holiday:''},
+  {room:'I',name:'컴퓨터응용',days:'수/목',time:'11:00~13:00',start:'06.17',end:'07.09',dates:'6/17,18,24,25,7/1,2,8,9',holiday:''},
+  {room:'I',name:'디지털드로잉(B)',days:'화/목/금',time:'11:00~13:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'I',name:'디지털드로잉(A)',days:'월/수/금',time:'11:00~13:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'J',name:'웹1',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'J',name:'일러스트',days:'월~목',time:'11:00~13:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'웹1',days:'월~목',time:'11:30~13:30',start:'06.11',end:'07.08',dates:'6/11,15,16,17,18,22,23,24,25,29,30,7/1,2,6,7,8',holiday:''},
+  {room:'H',name:'AI융합 스마트기기UXUI(부산시)',days:'월~금',time:'13:00~18:00',start:'06.23',end:'11.27',dates:'',holiday:'6.26 7.9~13, 24'},
+  {room:'K',name:'디지털드로잉(B)',days:'화/목/금',time:'13:00~15:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'K',name:'디지털드로잉(A)',days:'월/수/금',time:'13:00~15:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'A',name:'모스/방학',days:'월~금',time:'14:00~16:00',start:'07.09',end:'07.31',dates:'',holiday:''},
+  {room:'B',name:'컴활2급/방학',days:'월~금',time:'14:00~16:00',start:'06.22',end:'07.10',dates:'',holiday:''},
+  {room:'B',name:'컴활1급/방학',days:'월~금',time:'14:00~16:00',start:'07.13',end:'08.07',dates:'',holiday:''},
+  {room:'C',name:'그린에너지 스마트건축(산대특)',days:'월~금',time:'14:00~18:00',start:'11.05',end:'07.07',dates:'',holiday:'5.25 6.3, 5, 12, 26'},
+  {room:'F',name:'프리미어1',days:'금',time:'14:00~17:00',start:'05.22',end:'06.12',dates:'',holiday:''},
+  {room:'F',name:'2D모션포폴',days:'월~목',time:'14:00~16:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'프리미어2',days:'금',time:'14:00~17:00',start:'06.19',end:'07.10',dates:'',holiday:''},
+  {room:'G',name:'렌더링 맥스',days:'월~목',time:'14:00~16:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'H',name:'컴활1급',days:'월~목',time:'14:00~16:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'H',name:'포토샵1/방학',days:'월~금',time:'14:00~15:30',start:'07.09',end:'07.23',dates:'',holiday:''},
+  {room:'I',name:'AI 크리에이터-시각편집',days:'금',time:'14:00~18:00',start:'05.15',end:'06.12',dates:'5/15,22,6/5,12',holiday:''},
+  {room:'I',name:'편집포폴3',days:'월~목',time:'14:00~16:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'J',name:'포토샵',days:'월~목',time:'14:00~16:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'ART',name:'디일러',days:'월~목',time:'14:00~16:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'C',name:'AI 편집디자인 과정(산대특)',days:'월~금',time:'15:00~18:00',start:'05.26',end:'07.08',dates:'',holiday:'6.3, 5'},
+  {room:'E',name:'일러스트1/방학',days:'월~금',time:'15:30~17:00',start:'07.09',end:'07.23',dates:'',holiday:''},
+  {room:'A',name:'캐드1/방학',days:'월~금',time:'16:00~18:00',start:'07.08',end:'07.22',dates:'',holiday:''},
+  {room:'B',name:'컴활2급/방학',days:'월~금',time:'16:00~18:00',start:'07.07',end:'07.28',dates:'',holiday:''},
+  {room:'C',name:'마야포폴',days:'월/수/금',time:'16:00~18:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'E',name:'3D모션포폴',days:'월~목',time:'16:00~18:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'인테리어포폴1',days:'월~목',time:'16:00~18:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'스케치업렌더링2',days:'금',time:'16:00~19:00',start:'06.12',end:'07.03',dates:'6/12,19,26,7/3',holiday:''},
+  {room:'G',name:'에펙',days:'월~목',time:'16:00~18:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'H',name:'모스/방학',days:'월~금',time:'16:00~18:00',start:'06.29',end:'07.21',dates:'',holiday:''},
+  {room:'J',name:'디지털드로잉(B)',days:'화/목/금',time:'16:00~18:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'J',name:'디지털드로잉(A)',days:'월/수/금',time:'16:00~18:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'K',name:'웹1',days:'월~목',time:'16:00~18:00',start:'06.11',end:'07.08',dates:'6/11,15,16,17,18,22,23,24,25,29,30,7/1,2,6,7,8',holiday:''},
+  {room:'D',name:'실내건축1(1,3개월)',days:'월~목',time:'18:00~20:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'F',name:'입시포폴',days:'화/목/금',time:'18:00~20:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'K',name:'디지털드로잉(B)',days:'화/목/금',time:'18:00~20:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'ART',name:'디지털드로잉(A)',days:'월/수/금',time:'18:00~20:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'B',name:'전산회계1급',days:'월/수/금',time:'19:00~22:00',start:'06.15',end:'07.31',dates:'',holiday:''},
+  {room:'C',name:'일러스트',days:'화/목/금',time:'19:00~22:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'C',name:'포토샵',days:'월/수/금',time:'19:00~22:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'D',name:'스케치업2',days:'화/목/금',time:'19:00~22:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'E',name:'캐드2',days:'월/수/금',time:'19:00~22:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'E',name:'레빗1',days:'월/수/금',time:'19:00~22:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'F',name:'모스',days:'화/목',time:'19:00~22:00',start:'05.12',end:'06.16',dates:'5/12,14,19,21,26,28,6/2,4,6,11,16',holiday:''},
+  {room:'F',name:'프리미어2',days:'금',time:'19:00~22:00',start:'05.29',end:'06.19',dates:'5/29,6/5,12,19',holiday:''},
+  {room:'G',name:'실무엑셀',days:'금',time:'19:00~22:00',start:'06.19',end:'07.24',dates:'6/19,26,7/3,10,24',holiday:''},
+  {room:'G',name:'컴활1급',days:'월~목',time:'19:00~22:00',start:'06.23',end:'07.14',dates:'',holiday:''},
+  {room:'H',name:'모션에펙',days:'화/목/금',time:'19:00~22:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'H',name:'프리미어1',days:'월/수',time:'19:00~22:00',start:'06.15',end:'06.24',dates:'',holiday:''},
+  {room:'I',name:'프리미어2',days:'월/수',time:'19:00~22:00',start:'06.29',end:'07.08',dates:'',holiday:''},
+  {room:'I',name:'AI 크리에이터-시각편집',days:'화/목',time:'19:00~21:00',start:'06.11',end:'07.07',dates:'6/11,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'I',name:'디일러',days:'월/수/금',time:'19:00~22:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'J',name:'피그마1',days:'화/목',time:'19:00~22:00',start:'06.11',end:'07.07',dates:'6/11,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'J',name:'AI-바이브코딩1',days:'월/수',time:'19:00~22:00',start:'06.15',end:'07.08',dates:'6/15,17,22,24,29,7/1,6,8',holiday:''},
+  {room:'A',name:'실내건축2(2,3개월)',days:'월~목',time:'20:00~22:00',start:'06.11',end:'07.08',dates:'',holiday:''},
+  {room:'B',name:'블렌더1',days:'화/목/금',time:'20:00~22:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'C',name:'모델링3',days:'월/수/금',time:'20:00~22:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''},
+  {room:'G',name:'디지털드로잉(B)',days:'화/목/금',time:'20:00~22:00',start:'06.11',end:'07.07',dates:'6/11,12,16,18,23,25,30,7/2,7',holiday:''},
+  {room:'G',name:'디지털드로잉(A)',days:'월/수/금',time:'20:00~22:00',start:'06.15',end:'07.08',dates:'6/15,17,19,22,24,29,7/1,6,8',holiday:''}
 ];
 
 function makeCard(c){
@@ -202,15 +216,16 @@ function makeCard(c){
   const TEXTBOOK_KW = ['포토샵','일러스트','캐드','컴활','모스','스케치업','맥스'];
   const hasTextbook = TEXTBOOK_KW.some(kw => c.name.includes(kw));
   const textbookExtra = hasTextbook
-    ? `\n· 교재 : \n· 교재구매사이트 : https://www.kedustore.com\n＊<필수> 개강일, 교재 꼭! 인지해주세요\n* 개강 3일전 수업 취소, 연기, 시간 및 과목변경 불가능합니다.`
+    ? '\n· 교재 : \n· 교재구매사이트 : https://www.kedustore.com\n＊<필수> 개강일, 교재 꼭! 인지해주세요\n* 개강 3일전 수업 취소, 연기, 시간 및 과목변경 불가능합니다.'
     : '';
-  const copyText = `■ SBS컴퓨터아트학원 부산점 개강안내\n· 수강과목 : ${c.name}(${c.days})\n· 개강일 : ${c.start}\n· 종강일 : ${c.end}\n· 수강시간 : ${c.time}\n· 강의실 : ${c.room} 강의장\n· 줌 링크 : ${zoom}\n· 대면/비대면 : 대면${textbookExtra}`;
-  const roomLabel = c.room+'강의장';
+  const datesLine = c.dates ? `\n· 수업일 : ${c.dates}` : '';
+  const holidayLine = c.holiday ? `\n· 휴강일 : ${c.holiday}` : '';
+  const copyText = `■ SBS컴퓨터아트학원 부산점 개강안내\n· 수강과목 : ${c.name}(${c.days})\n· 개강일 : ${c.start}\n· 종강일 : ${c.end}\n· 수강시간 : ${c.time}\n· 강의실 : ${c.room} 강의장\n· 줌 링크 : ${zoom}\n· 대면/비대면 : 대면${datesLine}${holidayLine}${textbookExtra}`;
   return `<div class="card" data-room="${c.room}" data-copy="${encodeURIComponent(copyText)}" onclick="toggleSelect(event,this)">
   <div class="card-check">✓</div>
   <div class="card-head">
     <div><div class="card-name">${c.name}</div><div class="card-sub">${c.days} | ${c.time}</div></div>
-    <span class="room-badge rb-${c.room}">${roomLabel}</span>
+    <span class="room-badge rb-${c.room}">${c.room} 강의장</span>
   </div>
   <hr class="card-hr">
   <ul class="info-list">
@@ -221,14 +236,15 @@ function makeCard(c){
     <li><span class="il-label">강의실</span><span class="il-val">${c.room} 강의장</span></li>
     <li><span class="il-label">줌 링크</span><a class="il-link" href="${zoom}" target="_blank" onclick="event.stopPropagation()">${zoom}</a></li>
     <li><span class="il-label">대면/비대면</span><span class="il-bold">대면</span></li>
-    ${hasTextbook ? `<li style="margin-top:4px"><span class="il-label">교재</span><span class="il-val"></span></li>
-    <li><span class="il-label">교재구매</span><a class="il-link" href="https://www.kedustore.com" target="_blank" onclick="event.stopPropagation()">https://www.kedustore.com</a></li>` : ''}
+    ${c.dates ? `<li><span class="il-label">수업일</span><span class="il-val dates-val">${c.dates}</span></li>` : ''}
+    ${c.holiday ? `<li><span class="il-label">휴강일</span><span class="il-val holiday-val">${c.holiday}</span></li>` : ''}
+    ${hasTextbook ? `<li style="margin-top:4px"><span class="il-label">교재구매</span><a class="il-link" href="https://www.kedustore.com" target="_blank" onclick="event.stopPropagation()">https://www.kedustore.com</a></li>` : ''}
   </ul>
   ${hasTextbook ? `<div class="textbook-notice">
     <span class="tb-required">＊필수</span> 개강일, 교재 꼭! 인지해주세요<br>
     <span class="tb-warn">＊</span> 개강 3일전 수업 취소, 연기, 시간 및 과목변경 불가능합니다.
   </div>` : ''}
-  <button class="copy-btn" onclick='event.stopPropagation();copyCard(this,${JSON.stringify(copyText)})'>📋 복사하기</button>
+  <button class="copy-btn" onclick='event.stopPropagation();copyCard(this,decodeURIComponent("${encodeURIComponent(copyText)}"))'>📋 복사하기</button>
 </div>`;
 }
 
@@ -267,17 +283,10 @@ btns.forEach(btn => btn.addEventListener('click', () => {
 }));
 searchInput.addEventListener('input', filterCards);
 
-// ── 다중선택 ──
 function toggleSelect(e, card){
-  // 복사버튼·링크 클릭 시 선택 무시
   if(e.target.closest('.copy-btn') || e.target.closest('.il-link')) return;
-  if(selectedCards.has(card)){
-    selectedCards.delete(card);
-    card.classList.remove('selected');
-  } else {
-    selectedCards.add(card);
-    card.classList.add('selected');
-  }
+  if(selectedCards.has(card)){ selectedCards.delete(card); card.classList.remove('selected'); }
+  else { selectedCards.add(card); card.classList.add('selected'); }
   updateMultiBar();
 }
 
@@ -295,35 +304,24 @@ function clearSelection(){
 
 function selectAllVisible(){
   document.querySelectorAll('.card[data-room]:not(.hidden)').forEach(card => {
-    selectedCards.add(card);
-    card.classList.add('selected');
+    selectedCards.add(card); card.classList.add('selected');
   });
   updateMultiBar();
 }
 
 function copySelected(){
   const texts = [];
-  // 화면 순서대로 수집
   document.querySelectorAll('.card[data-room]').forEach(card => {
-    if(selectedCards.has(card)){
-      texts.push(decodeURIComponent(card.dataset.copy));
-    }
+    if(selectedCards.has(card)) texts.push(decodeURIComponent(card.dataset.copy));
   });
   const combined = texts.join('\n\n──────────────\n\n');
   const done = () => {
     multiCopyBtn.classList.add('ok');
     multiCopyBtn.textContent = '✅ ' + texts.length + '개 복사됨!';
-    setTimeout(() => {
-      multiCopyBtn.classList.remove('ok');
-      multiCopyBtn.textContent = '📋 선택 항목 복사';
-    }, 2500);
+    setTimeout(() => { multiCopyBtn.classList.remove('ok'); multiCopyBtn.textContent = '📋 선택 항목 복사'; }, 2500);
   };
   if(navigator.clipboard){ navigator.clipboard.writeText(combined).then(done); }
-  else {
-    const ta = document.createElement('textarea'); ta.value = combined;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta); done();
-  }
+  else { const ta=document.createElement('textarea');ta.value=combined;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done(); }
 }
 
 function copyCard(btn, text){
@@ -332,11 +330,7 @@ function copyCard(btn, text){
     setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '📋 복사하기'; }, 2000);
   };
   if(navigator.clipboard){ navigator.clipboard.writeText(text).then(done); }
-  else {
-    const ta = document.createElement('textarea'); ta.value = text;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta); done();
-  }
+  else { const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done(); }
 }
 
 filterCards();
