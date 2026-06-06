@@ -218,7 +218,7 @@ function makeCard(c){
   const textbookExtra = hasTextbook
     ? '\n· 교재 : \n· 교재구매사이트 : https://www.kedustore.com\n＊<필수> 개강일, 교재 꼭! 인지해주세요\n* 개강 3일전 수업 취소, 연기, 시간 및 과목변경 불가능합니다.'
     : '';
-  const datesLine = c.dates ? `\n· 수업일 : ${c.dates}` : '';
+  const datesLine = c.dates && !c.days.includes('~') ? `\n· 수업일 : ${c.dates}` : '';
   const holidayLine = c.holiday ? `\n· 휴강일 : ${c.holiday}` : '';
   const copyText = `■ SBS컴퓨터아트학원 부산점 개강안내\n· 수강과목 : ${c.name}(${c.days})\n· 개강일 : ${c.start}\n· 종강일 : ${c.end}\n· 수강시간 : ${c.time}\n· 강의실 : ${c.room} 강의장\n· 줌 링크 : ${zoom}\n· 대면/비대면 : 대면${datesLine}${holidayLine}${textbookExtra}`;
   return `<div class="card" data-room="${c.room}" data-copy="${encodeURIComponent(copyText)}" onclick="toggleSelect(event,this)">
@@ -236,7 +236,7 @@ function makeCard(c){
     <li><span class="il-label">강의실</span><span class="il-val">${c.room} 강의장</span></li>
     <li><span class="il-label">줌 링크</span><a class="il-link" href="${zoom}" target="_blank" onclick="event.stopPropagation()">${zoom}</a></li>
     <li><span class="il-label">대면/비대면</span><span class="il-bold">대면</span></li>
-    ${c.dates ? `<li><span class="il-label">수업일</span><span class="il-val dates-val">${c.dates}</span></li>` : ''}
+    ${c.dates && !c.days.includes('~') ? `<li><span class="il-label">수업일</span><span class="il-val dates-val">${c.dates}</span></li>` : ''}
     ${c.holiday ? `<li><span class="il-label">휴강일</span><span class="il-val holiday-val">${c.holiday}</span></li>` : ''}
     ${hasTextbook ? `<li style="margin-top:4px"><span class="il-label">교재구매</span><a class="il-link" href="https://www.kedustore.com" target="_blank" onclick="event.stopPropagation()">https://www.kedustore.com</a></li>` : ''}
   </ul>
